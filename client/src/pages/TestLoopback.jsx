@@ -7,7 +7,7 @@ const TestLoopback = () => {
 
   const fetchData = async (path) => {
     setLoading(true);
-    const response = await fetch(`http://65.2.54.125:3000${path}`);
+    const response = await fetch(`//65.2.54.125:3000${path}`);
     const data = await response.json();
     console.log(data);
     setData(data);
