@@ -1,13 +1,15 @@
-import { useState, useEffect } from "react";
-import "react-loading-skeleton/dist/skeleton.css";
+import { useState } from "react";
 
 const TestLoopback = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [activeButton, setActiveButton] = useState(null);
 
   const fetchData = async (path) => {
     setLoading(true);
-    const response = await fetch(`//65.2.54.125:3000${path}`);
+    const response = await fetch(
+      `https://loopback-api-f2ixa7hrsq-uc.a.run.app${path}`
+    );
     const data = await response.json();
     console.log(data);
     setData(data);
@@ -16,69 +18,68 @@ const TestLoopback = () => {
 
   const handleClick = (path) => {
     fetchData(path);
+    setActiveButton(path);
   };
 
+  const buttons = [
+    { path: "/getAllPolicies", label: "All Policies" },
+    { path: "/getActivePolicies", label: "Active Policies" },
+    { path: "/getExpiredPolicies", label: "Expired Policies" },
+    { path: "/getRenewablePolicies", label: "Renewable Policies" },
+  ];
+
   return (
-    <div>
-      <h1 className="text-5xl text-center my-8">Test Loopback</h1>
-      <div className="flex justify-center flex-row space-x-4">
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          onClick={() => handleClick("/getAllPolicies")}
-        >
-          /getAllPolicies
-        </button>
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          onClick={() => handleClick("/getActivePolicies")}
-        >
-          /getActivePolicies
-        </button>
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          onClick={() => handleClick("/getExpiredPolicies")}
-        >
-          /getExpiredPolicies
-        </button>
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          onClick={() => handleClick("/getRenewablePolicies")}
-        >
-          /getRenewalPolicies
-        </button>
+    <div className="p-4 w-full ">
+      <h1 className="text-3xl sm:text-5xl text-center my-4 sm:my-8">
+        Test Loopback
+      </h1>
+
+      <div className="flex flex-col sm:flex-row sm:justify-center sm:flex-wrap gap-2 sm:gap-4">
+        <>
+          {buttons.map((button) => (
+            <button
+              key={button.path}
+              className={`font-bold py-2 px-3 sm:px-4 rounded text-sm sm:text-base transition-colors duration-200 w-full sm:w-auto
+                 ${
+                   activeButton === button.path
+                     ? "bg-blue-700 text-white"
+                     : "bg-blue-500 hover:bg-blue-600 text-white"
+                 }`}
+              onClick={() => handleClick(button.path)}
+            >
+              {button.label}
+            </button>
+          ))}
+        </>
       </div>
+
       {loading ? (
-        <p className="text-center mt-8"> Fetching...</p>
+        <p className="text-center mt-4 sm:mt-8">Fetching...</p>
       ) : (
-        <div className="flex justify-start flex-row space-x-2 flex-wrap mt-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4 sm:mt-8">
           {data?.map((item, index) => (
-            <div key={index} className="flex justify-center p-4">
-              <div className="w-full max-w-sm bg-slate-700 py-6 px-10 rounded-lg shadow-lg border border-gray-200 flex flex-col space-y-2 sm:space-y-4">
-                <p className="text-lg font-semibold text-white-700">
-                  {item.policyNumber}
-                </p>
-                <p className="text-sm text-gray-500">{item.policyHolder}</p>
-                <div className="text-sm flex flex-col sm:flex-row sm:justify-start space-x-1">
-                  <span className="text-gray-400">Start: </span>
-                  <span className="text-gray-400"> {item.startDate}</span>
-                </div>
-                <div className="text-sm flex flex-col sm:flex-row sm:justify-start space-x-1">
-                  <span className="text-gray-400">End: </span>
-                  <span className="text-gray-400">{item.endDate}</span>
-                </div>
-                <div className="text-sm flex flex-col sm:flex-row sm:justify-start space-x-1">
-                  <span className="text-gray-400">Status: </span>
-                  <span
-                    className={`font-medium ${
-                      item.status === "Active"
-                        ? "text-green-600"
-                        : "text-red-600"
-                    }`}
-                  >
-                    {item.status}
-                  </span>
-                </div>
+            <div
+              key={index}
+              className="bg-slate-700 p-6 sm:p-8 rounded-lg shadow-lg border border-gray-200"
+            >
+              <p className="text-xl font-semibold text-white">
+                {item.policyNumber}
+              </p>
+              <p className="text-sm text-gray-400 mt-2">{item.policyHolder}</p>
+              <div className="text-sm text-gray-400 mt-4">
+                <p>Start: {item.startDate}</p>
+                <p>End: {item.endDate}</p>
               </div>
+              <p className="text-sm mt-4">
+                Status:{" "}
+                <span
+                  className={`font-medium ${
+                    item.status === "Active" ? "text-green-400" : "text-red-400"
+                  }`}
+                >
+                  {item.status}
+                </span>
+              </p>
             </div>
           ))}
         </div>
