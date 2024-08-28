@@ -34,6 +34,10 @@ const TestLoopback = () => {
         Test Loopback
       </h1>
 
+      <p className="text-center mb-4 sm:mb-8">
+        Initial request may take a while as the server is booting.
+      </p>
+
       <div className="flex flex-col sm:flex-row sm:justify-center sm:flex-wrap gap-2 sm:gap-4">
         <>
           {buttons.map((button) => (
